@@ -25,13 +25,19 @@ status_camera_encontro = pulp.LpVariable.dicts("status_camera_encontro",[(j) for
 
 prob += (pulp.lpSum([status_camera_encontro[x] for x in range(n)])), "Soma do número de cameras" #Função objetivo
 
-for i in range(1,8):
-  prob += (
-      pulp.lpSum([A[i][numero]*status_camera_encontro[numero] for numero in range(n)]) ==  [A[i][numero] for numero in range(i)]
-  )
+#for i in range(n):
+ # prob += (
+ #     pulp.lpSum([A[i][numero]*status_camera_encontro[i] for numero in range(i+1,8)]) ==  [A[i][numero] for numero in range(i+1,8)]
+ # )
+for i in range(n):
+  for numero in range(n):
+    if A[i][numero] != 0:
+      prob += lpSum([A[i][numero]*(status_camera_encontro[numero]+status_camera_encontro[i])])>= 1
 
+  
 prob.solve()
 
 for v in prob.variables():
   print(v.name, "=", v.varValue)
 
+  
